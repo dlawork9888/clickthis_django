@@ -1,31 +1,36 @@
-# 베이스 이미지는 Alpine Linux 기반으로 선택
-FROM python:3.8-alpine
+# 베이스 이미지로 Debian Buster Slim 기반의 Python 3.8 이미지 사용
+FROM python:3.8-slim
 
-# 바이트 코드 캐싱 안하게 설정
+# 파이썬 바이트 코드 생성 안 함
 ENV PYTHONDONTWRITEBYTECODE 1
-# Python의 stdout과 stderr의 버퍼링 비활성화
+# 파이썬의 stdout과 stderr 버퍼링 비활성화
 ENV PYTHONUNBUFFERED 1
 
-# 필요한 패키지 설치를 위해 build-base와 libressl-dev를 추가
-RUN apk update \
-    && apk add --no-cache build-base libressl-dev \
-    && rm -rf /var/cache/apk/*
 
-# 워크 디렉토리 설정
+# 필요한 시스템 패키지 설치
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libssl-dev \
+    default-libmysqlclient-dev \
+    libmariadb-dev \ 
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# pip 최신 버전으로 업그레이드
+RUN pip install --upgrade pip
+
+# 작업 디렉터리 설정
 WORKDIR /app
 
-# 의존성 설치
+# 의존성 파일 복사 후 설치
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 프로젝트 파일 복사
 COPY . /app/
 
-# 정적 파일 수집 및 압축
-RUN python manage.py collectstatic --noinput
-
-# 포트 노출
+# 애플리케이션 포트 노출
 EXPOSE 8002
 
-# Gunicorn 실행
+# 컨테이너 실행 시 마이그레이션 실행 후 Gunicorn으로 애플리케이션 실행
 CMD ["sh", "-c", "python manage.py migrate && gunicorn clickthis_django.wsgi:application --bind 0.0.0.0:8002"]

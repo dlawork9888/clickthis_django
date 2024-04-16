@@ -69,8 +69,9 @@ MIDDLEWARE = [
 
 
 ##### 호스트 허용 관련
-ALLOWED_HOSTS = ['ec2-3-35-120-59.ap-northeast-2.compute.amazonaws.com', '127.0.0.1'] # 내 EC2인스턴스만 허용, 뒤에는 테스트용 !
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] # 내 EC2인스턴스만 허용, 뒤에는 테스트용 !
 CORS_ALLOW_ALL_ORIGINS = True  # 모든 출처에서 오는 요청을 허용
+
 """
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3002",  # React 포트 
