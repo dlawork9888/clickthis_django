@@ -8,6 +8,7 @@ for Deploy Practice ...
 ```
 - HTTPS 적용 완료 !
 - NGINX 설정 완료 !
+- Docker: mysqlclient로 인한 빌드 이슈로 Dockerfile 수정 
 ```
 
 ## 2024.03
