@@ -1,6 +1,5 @@
 # Click This !
 https://clickthis.dlawork9888.site
-한번 씩 눌러주고 가세요 !
 
 ## One Day Project ! 
 for Deploy Practice ...
