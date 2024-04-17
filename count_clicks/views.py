@@ -10,10 +10,16 @@ from .models import ClickModel # Click 모델 import
 from .serializers import ClickSerializer #Click 시리얼라이저 import
 
 class ClickAPIView(APIView):
+
+
+    
     ### GET
     # 페이지가 처음 로드될 때, count_id을 기준으로 DESC 정렬을 했을 때 가장 처음 레코드의 count_id를 반환
     # SELECT COUNT_ID FROM CLICK ORDER BY DESC 
     def get(self, request, *args, **kwargs):
+        # SQL QUERY ?
+        # SELECT * FROM ClickModel ORDER BY count_id DESC LIMIT 1;
+        # To Queryset ! 
         latest_click = ClickModel.objects.order_by('-count_id').first()
         
         # 테이블이 비어있을 수도 있으니까
@@ -23,6 +29,9 @@ class ClickAPIView(APIView):
             return Response(reponse_data, status=status.HTTP_200_OK)
         else: # 없으면
             return Response({'message': 'No clicks found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
     ### POST
     # 이 POST요청 body에는 아무 데이터도 포함되어 있지 않음 !
     def post(self, request, *args, **kwargs):

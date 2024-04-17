@@ -1,16 +1,6 @@
 
 import os
-from dotenv import load_dotenv
 
-# .env 파일 로드
-load_dotenv()
-
-# 환경 변수 가져오기
-DB_NAME = os.getenv("MYSQL_DB_NAME")
-DB_USER = os.getenv("MYSQL_USER")
-DB_PASSWORD = os.getenv("MYSQL_PASSWORD")
-DB_HOST = os.getenv("MYSQL_HOST")
-DB_PORT = os.getenv("MYSQL_PORT")
 """
 Django settings for clickthis_django project.
 
@@ -68,8 +58,10 @@ MIDDLEWARE = [
 
 
 
-##### 호스트 허용 관련
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] # 내 EC2인스턴스만 허용, 뒤에는 테스트용 !
+###########################################################################################################################
+########################################      호스트 허용 관련         #####################################################
+###########################################################################################################################
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] # 로컬 테스트용 127.0.0.1, 리버스 프록시 사용
 CORS_ALLOW_ALL_ORIGINS = True  # 모든 출처에서 오는 요청을 허용
 
 """
@@ -78,6 +70,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8002",  # Django 포트
 ]
 """
+###########################################################################################################################
+###########################################################################################################################
+###########################################################################################################################
+
+
+
+
+
 ROOT_URLCONF = "clickthis_django.urls"
 
 TEMPLATES = [
@@ -97,14 +97,33 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "clickthis_django.wsgi.application"
-
-
+###########################################################################################################################
+########################################      DATABASE SETTINGS       #####################################################
+###########################################################################################################################
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# 
-# DATABASES 설정
-DATABASES = {
+# 데이터베이스 설정 => MySQL 사용 => 정보는 .env에
+from dotenv import load_dotenv
+
+# .env 파일 로드
+load_dotenv()
+
+# 환경 변수 가져오기
+DB_NAME = os.getenv("MYSQL_DB_NAME")
+DB_USER = os.getenv("MYSQL_USER")
+DB_PASSWORD = os.getenv("MYSQL_PASSWORD")
+DB_HOST = os.getenv("MYSQL_HOST")
+DB_PORT = os.getenv("MYSQL_PORT")
+
+DATABASES_for_local_test = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+DATABASES_for_deploy = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': DB_NAME,
@@ -114,6 +133,13 @@ DATABASES = {
         'PORT': DB_PORT,
     }
 }
+
+# 설정 포지션
+DATABASES = DATABASES_for_deploy
+
+###########################################################################################################################
+###########################################################################################################################
+###########################################################################################################################
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
