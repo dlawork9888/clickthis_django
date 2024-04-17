@@ -10,6 +10,7 @@ for Deploy Practice ...
 - 혹시 모를 DB볼륨 폭발을 방지하기 위한 Database Trigger 추가
    - 사실 트리거는 아니고(DB Trigger는 DB를 직접 건드려함), ClickModel의 save메서드를 오버라이드
    - 레코드 개수를 확인하고 일정 수가 넘으면 오래된 레코드를 삭제하도록 확장
+- local test를 위해 settings.py의 DATABASES를 살짝 수정 => deploy, local_test 변수로 통제
 ```
 
 
