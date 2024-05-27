@@ -9,6 +9,11 @@ from rest_framework import status
 from .models import ClickModel # Click 모델 import
 from .serializers import ClickSerializer #Click 시리얼라이저 import
 
+# logger
+import logging
+logger = logging.getLogger(__name__)
+
+
 class ClickAPIView(APIView):
 
 
@@ -17,18 +22,33 @@ class ClickAPIView(APIView):
     # 페이지가 처음 로드될 때, count_id을 기준으로 DESC 정렬을 했을 때 가장 처음 레코드의 count_id를 반환
     # SELECT COUNT_ID FROM CLICK ORDER BY DESC 
     def get(self, request, *args, **kwargs):
-        # SQL QUERY ?
-        # SELECT * FROM ClickModel ORDER BY count_id DESC LIMIT 1;
-        # To Queryset ! 
-        latest_click = ClickModel.objects.order_by('-count_id').first()
-        
-        # 테이블이 비어있을 수도 있으니까
-        if latest_click: # 있으면
-            serializer = ClickSerializer(latest_click)
-            reponse_data = {'count_id': serializer.data.get('count_id')}
-            return Response(reponse_data, status=status.HTTP_200_OK)
-        else: # 없으면
-            return Response({'message': 'No clicks found.'}, status=status.HTTP_404_NOT_FOUND)
+        print('Click - GET requset')
+        # 로그 반환 GET 요청 추가
+        # GET /api/clicks/?top100=true 요청이면 아래 수행
+        # 쿼리 파라미터로 top100 요청인지 확인
+        top100 = request.query_params.get('top100', 'false').lower() == 'true'
+        print(f'top100 request: {top100}')
+        if top100:
+            top_clicks = ClickModel.objects.order_by('-count_id')[:100]
+            if top_clicks.exists():  # 있으면
+                serializer = ClickSerializer(top_clicks, many=True)
+                response_data = serializer.data
+                return Response(response_data, status=status.HTTP_200_OK)
+            else:  # 없으면
+                return Response({'message': 'No clicks found.'}, status=status.HTTP_404_NOT_FOUND)
+        # GET /api/clicks/이면 아래 수행
+        else:
+            # SQL QUERY ?
+            # SELECT * FROM ClickModel ORDER BY count_id DESC LIMIT 1;
+            # To Queryset ! 
+            latest_click = ClickModel.objects.order_by('-count_id').first()
+            # 테이블이 비어있을 수도 있으니까
+            if latest_click: # 있으면
+                serializer = ClickSerializer(latest_click)
+                reponse_data = {'count_id': serializer.data.get('count_id')}
+                return Response(reponse_data, status=status.HTTP_200_OK)
+            else: # 없으면
+                return Response({'message': 'No clicks found.'}, status=status.HTTP_404_NOT_FOUND)
         
 
 
