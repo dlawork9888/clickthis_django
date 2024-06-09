@@ -4,8 +4,17 @@ https://clickthis.dlawork9888.site
 ## One Day Project ! 
 for Deploy Practice ...
 
-
-## Latest ! - 2024.04.18
+## Latest ! - 2024.05.30
+```
+- ClickThisModel의 DateField => DateTimeField -> 로그 등록을 위해
+- migration: 기존 데이터를 유지하기 위해, 새로운 필드를 추가하고, 데이터를 변환한 후, 원래 필드를 제거
+   - clickthis_django/count_clicks/migrations/0002_alter_clickmodel_clicked_date.py 참고
+- ClickAPIView 수정
+   - GET request에 쿼리 파라미터 추가
+   - GET /api/clicks/?top100=true 이면 top100 로그를 반환
+   - clickthis_django/count_clicks/views.py 참고
+```
+##2024.04.18
 ```
 - 혹시 모를 DB볼륨 폭발을 방지하기 위한 Database Trigger 추가
    - 사실 트리거는 아니고(DB Trigger는 DB를 직접 건드려함), ClickModel의 save메서드를 오버라이드
